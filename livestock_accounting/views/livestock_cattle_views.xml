@@ -81,7 +81,7 @@
                             <group>
                                 <field name="retirement_reason" invisible="state == 'inventory'" required="state in ('retired','sold')"/>
                                 <field name="retirement_notes" invisible="state == 'inventory'"/>
-                                <label class="o_form_label" string="Este bloque ayuda a documentar eventos de baja y venta para auditoría y trazabilidad."/>
+                                <div class="o_form_label">Este bloque ayuda a documentar eventos de baja y venta para auditoría y trazabilidad.</div>
                             </group>
                         </page>
                     </notebook>
