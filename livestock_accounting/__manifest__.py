@@ -1,0 +1,21 @@
+{
+    "name": "Ganadería - Contabilidad de Hato",
+    "summary": "Gestión ganadera con asignación de costes históricos y trazabilidad contable",
+    "version": "19.0.1.0.0",
+    "author": "Ganadera",
+    "website": "https://example.com",
+    "license": "LGPL-3",
+    "category": "Accounting",
+    "depends": ["account", "mail"],
+    "data": [
+        "security/livestock_security.xml",
+        "security/ir.model.access.csv",
+        "data/livestock_sequence.xml",
+        "views/account_move_line_views.xml",
+        "views/livestock_cattle_views.xml",
+        "wizard/livestock_cost_allocation_views.xml",
+        "views/livestock_menus.xml",
+    ],
+    "application": True,
+    "installable": True,
+}

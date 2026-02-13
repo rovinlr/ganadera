@@ -1,0 +1,59 @@
+<odoo>
+    <record id="view_livestock_cost_allocation_tree" model="ir.ui.view">
+        <field name="name">livestock.cost.allocation.tree</field>
+        <field name="model">livestock.cost.allocation</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="date"/>
+                <field name="method"/>
+                <field name="total_to_allocate"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_livestock_cost_allocation_form" model="ir.ui.view">
+        <field name="name">livestock.cost.allocation.form</field>
+        <field name="model">livestock.cost.allocation</field>
+        <field name="arch" type="xml">
+            <form string="Asignación de costes ganaderos">
+                <header>
+                    <button name="action_allocate_costs" type="object" string="Asignar costes" class="btn-primary" invisible="state == 'done'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" readonly="1"/>
+                            <field name="date"/>
+                            <field name="method"/>
+                        </group>
+                        <group>
+                            <field name="company_id"/>
+                            <field name="currency_id" groups="base.group_multi_currency"/>
+                            <field name="total_to_allocate" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="cattle_ids" widget="many2many_tags" options="{'no_create_edit': True}"/>
+                    </group>
+                    <group>
+                        <field name="invoice_line_ids" widget="many2many_tags"/>
+                    </group>
+                    <group>
+                        <field name="note"/>
+                    </group>
+                    <label string="Si una línea de factura tiene categoría ganadera, su importe se distribuye únicamente entre los animales de esa categoría."/>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_livestock_cost_allocation" model="ir.actions.act_window">
+        <field name="name">Asignación de costes</field>
+        <field name="res_model">livestock.cost.allocation</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

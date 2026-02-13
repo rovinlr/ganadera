@@ -1,0 +1,118 @@
+<odoo>
+    <record id="view_livestock_cattle_tree" model="ir.ui.view">
+        <field name="name">livestock.cattle.tree</field>
+        <field name="model">livestock.cattle</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence_code"/>
+                <field name="name"/>
+                <field name="category"/>
+                <field name="breed"/>
+                <field name="inclusion_date"/>
+                <field name="current_weight"/>
+                <field name="total_historical_cost"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_livestock_cattle_form" model="ir.ui.view">
+        <field name="name">livestock.cattle.form</field>
+        <field name="model">livestock.cattle</field>
+        <field name="arch" type="xml">
+            <form string="Ganado">
+                <header>
+                    <field name="state" widget="statusbar" statusbar_visible="inventory,retired,sold"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="sequence_code" readonly="1"/>
+                            <field name="name"/>
+                            <field name="ear_tag"/>
+                            <field name="category"/>
+                            <field name="breed"/>
+                            <field name="inclusion_date"/>
+                        </group>
+                        <group>
+                            <field name="current_weight" readonly="1"/>
+                            <field name="age_days" readonly="1"/>
+                            <field name="total_historical_cost" readonly="1"/>
+                            <field name="currency_id" groups="base.group_multi_currency"/>
+                            <field name="farm_location"/>
+                            <field name="responsible_id"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Control de pesos">
+                            <field name="weight_line_ids">
+                                <list editable="bottom">
+                                    <field name="date"/>
+                                    <field name="weight"/>
+                                    <field name="notes"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Coste histórico">
+                            <field name="cost_line_ids" readonly="1">
+                                <list>
+                                    <field name="allocation_date"/>
+                                    <field name="source_document"/>
+                                    <field name="move_line_id"/>
+                                    <field name="method"/>
+                                    <field name="allocated_amount" sum="Total"/>
+                                    <field name="allocation_id"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Sanidad y bienestar">
+                            <field name="health_event_ids">
+                                <list editable="bottom">
+                                    <field name="date"/>
+                                    <field name="event_type"/>
+                                    <field name="description"/>
+                                    <field name="veterinarian"/>
+                                    <field name="notes"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Baja y cumplimiento">
+                            <group>
+                                <field name="retirement_reason" invisible="state == 'inventory'" required="state in ('retired','sold')"/>
+                                <field name="retirement_notes" invisible="state == 'inventory'"/>
+                                <label string="Este bloque ayuda a documentar eventos de baja y venta para auditoría y trazabilidad."/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_livestock_cattle_search" model="ir.ui.view">
+        <field name="name">livestock.cattle.search</field>
+        <field name="model">livestock.cattle</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="sequence_code"/>
+                <field name="name"/>
+                <field name="category"/>
+                <field name="state"/>
+                <group expand="0" string="Agrupar por">
+                    <filter string="Categoría" name="group_category" context="{'group_by': 'category'}"/>
+                    <filter string="Estado" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Raza" name="group_breed" context="{'group_by': 'breed'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_livestock_cattle" model="ir.actions.act_window">
+        <field name="name">Ganado</field>
+        <field name="res_model">livestock.cattle</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_livestock_cattle_search"/>
+    </record>
+</odoo>
