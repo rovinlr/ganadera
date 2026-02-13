@@ -1,0 +1,17 @@
+<odoo>
+    <data noupdate="1">
+        <record id="seq_livestock_cattle" model="ir.sequence">
+            <field name="name">Ganado</field>
+            <field name="code">livestock.cattle</field>
+            <field name="prefix">GAN/%(year)s/</field>
+            <field name="padding">4</field>
+        </record>
+
+        <record id="seq_livestock_cost_allocation" model="ir.sequence">
+            <field name="name">Asignación de Costes Ganaderos</field>
+            <field name="code">livestock.cost.allocation</field>
+            <field name="prefix">ACG/%(year)s/</field>
+            <field name="padding">4</field>
+        </record>
+    </data>
+</odoo>
