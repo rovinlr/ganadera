@@ -100,11 +100,10 @@
                 <field name="name"/>
                 <field name="category"/>
                 <field name="state"/>
-                <group expand="0" string="Agrupar por">
-                    <filter string="Categoría" name="group_category" context="{'group_by': 'category'}"/>
-                    <filter string="Estado" name="group_state" context="{'group_by': 'state'}"/>
-                    <filter string="Raza" name="group_breed" context="{'group_by': 'breed'}"/>
-                </group>
+                <separator/>
+                <filter string="Agrupar por categoría" name="group_category" context="{'group_by': 'category'}"/>
+                <filter string="Agrupar por estado" name="group_state" context="{'group_by': 'state'}"/>
+                <filter string="Agrupar por raza" name="group_breed" context="{'group_by': 'breed'}"/>
             </search>
         </field>
     </record>
