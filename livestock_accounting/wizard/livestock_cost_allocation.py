@@ -77,7 +77,7 @@ class LivestockCostAllocation(models.Model):
         domain = [
             ("move_id.move_type", "=", "in_invoice"),
             ("move_id.state", "=", "posted"),
-            ("display_type", "=", False),
+            ("display_type", "in", [False, "product"]),
             ("exclude_from_invoice_tab", "=", False),
             ("company_id", "=", self.company_id.id),
         ]
