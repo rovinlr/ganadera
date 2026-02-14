@@ -59,16 +59,30 @@ class LivestockCostAllocation(models.Model):
     def _get_allocated_move_line_ids(self):
         return self.env["livestock.cost.history"].search([("move_line_id", "!=", False)]).mapped("move_line_id").ids
 
+    def _get_reserved_move_line_ids(self):
+        self.ensure_one()
+        domain = [
+            ("allocation_id.state", "=", "draft"),
+            ("selected", "=", True),
+            ("move_line_id", "!=", False),
+        ]
+        if self.id:
+            domain.append(("allocation_id", "!=", self.id))
+        return self.env["livestock.cost.allocation.line"].search(domain).mapped("move_line_id").ids
+
     def _get_available_invoice_lines(self):
         self.ensure_one()
-        allocated_line_ids = self._get_allocated_move_line_ids()
+        unavailable_line_ids = set(self._get_allocated_move_line_ids())
+        unavailable_line_ids.update(self._get_reserved_move_line_ids())
         domain = [
             ("move_id.move_type", "=", "in_invoice"),
             ("move_id.state", "=", "posted"),
+            ("display_type", "=", False),
+            ("exclude_from_invoice_tab", "=", False),
             ("company_id", "=", self.company_id.id),
         ]
-        if allocated_line_ids:
-            domain.append(("id", "not in", allocated_line_ids))
+        if unavailable_line_ids:
+            domain.append(("id", "not in", list(unavailable_line_ids)))
         return self.env["account.move.line"].search(domain)
 
     def _sync_available_invoice_lines(self):
@@ -94,6 +108,18 @@ class LivestockCostAllocation(models.Model):
 
     def action_refresh_available_lines(self):
         self._sync_available_invoice_lines()
+
+    def action_open_line_selection_wizard(self):
+        self.ensure_one()
+        self._sync_available_invoice_lines()
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Seleccionar subtotales"),
+            "res_model": "livestock.cost.allocation.select.lines.wizard",
+            "view_mode": "form",
+            "target": "new",
+            "context": {"default_allocation_id": self.id},
+        }
 
     def action_allocate_costs(self):
         self.ensure_one()
@@ -170,3 +196,40 @@ class LivestockCostAllocationLine(models.Model):
     price_subtotal = fields.Monetary(related="move_line_id.price_subtotal", string="Subtotal", store=False, readonly=True)
     livestock_category = fields.Selection(related="move_line_id.livestock_category", string="Categoría", store=False, readonly=True)
     currency_id = fields.Many2one(related="move_line_id.currency_id", store=False, readonly=True)
+
+
+class LivestockCostAllocationSelectLinesWizard(models.TransientModel):
+    _name = "livestock.cost.allocation.select.lines.wizard"
+    _description = "Asistente para seleccionar subtotales"
+
+    allocation_id = fields.Many2one("livestock.cost.allocation", required=True, readonly=True)
+    available_line_ids = fields.Many2many("account.move.line", string="Líneas disponibles", readonly=True)
+    selected_line_ids = fields.Many2many(
+        "account.move.line",
+        string="Subtotales a cargar",
+        domain="[('id', 'in', available_line_ids)]",
+    )
+
+    @api.model
+    def default_get(self, fields_list):
+        defaults = super().default_get(fields_list)
+        allocation = self.env["livestock.cost.allocation"].browse(defaults.get("allocation_id"))
+        if not allocation:
+            return defaults
+        available_lines = allocation._get_available_invoice_lines()
+        selected_lines = allocation.allocation_line_ids.filtered("selected").mapped("move_line_id") & available_lines
+        defaults.update(
+            {
+                "available_line_ids": [fields.Command.set(available_lines.ids)],
+                "selected_line_ids": [fields.Command.set(selected_lines.ids)],
+            }
+        )
+        return defaults
+
+    def action_apply_selection(self):
+        self.ensure_one()
+        self.allocation_id._sync_available_invoice_lines()
+        selected_ids = set(self.selected_line_ids.ids)
+        for line in self.allocation_id.allocation_line_ids:
+            line.selected = line.move_line_id.id in selected_ids
+        return {"type": "ir.actions.act_window_close"}
