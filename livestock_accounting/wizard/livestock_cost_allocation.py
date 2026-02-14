@@ -114,7 +114,7 @@ class LivestockCostAllocation(models.Model):
         self._sync_available_invoice_lines()
         return {
             "type": "ir.actions.act_window",
-            "name": _("Seleccionar subtotales"),
+            "name": _("Seleccionar facturas"),
             "res_model": "livestock.cost.allocation.select.lines.wizard",
             "view_mode": "form",
             "target": "new",
@@ -200,7 +200,7 @@ class LivestockCostAllocationLine(models.Model):
 
 class LivestockCostAllocationSelectLinesWizard(models.TransientModel):
     _name = "livestock.cost.allocation.select.lines.wizard"
-    _description = "Asistente para seleccionar subtotales"
+    _description = "Asistente para seleccionar facturas"
 
     allocation_id = fields.Many2one("livestock.cost.allocation", required=True, readonly=True)
     available_line_ids = fields.Many2many(
@@ -216,7 +216,7 @@ class LivestockCostAllocationSelectLinesWizard(models.TransientModel):
         "lca_sel_wiz_selected_rel",
         "wizard_id",
         "move_line_id",
-        string="Subtotales a cargar",
+        string="Líneas de factura a cargar",
         domain="[('id', 'in', available_line_ids)]",
     )
 
