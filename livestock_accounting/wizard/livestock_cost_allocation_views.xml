@@ -44,9 +44,7 @@
                     <group>
                         <field name="note"/>
                     </group>
-                    <div class="o_form_label">
-                        Si una línea de factura tiene categoría ganadera, su importe se distribuye únicamente entre los animales de esa categoría.
-                    </div>
+                    <label for="note" string="Si una línea de factura tiene categoría ganadera, su importe se distribuye únicamente entre los animales de esa categoría." class="o_form_label"/>
                 </sheet>
                 <chatter/>
             </form>
