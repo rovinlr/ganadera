@@ -20,7 +20,7 @@
             <form string="Asignación de costes ganaderos">
                 <header>
                     <button name="action_allocate_costs" type="object" string="Asignar costes" class="btn-primary" invisible="state == 'done'"/>
-                    <button name="action_open_line_selection_wizard" type="object" string="Seleccionar subtotales" class="btn-secondary" invisible="state == 'done'"/>
+                    <button name="action_open_line_selection_wizard" type="object" string="Seleccionar facturas" class="btn-secondary" invisible="state == 'done'"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
                 </header>
                 <sheet>
@@ -68,16 +68,19 @@
         <field name="name">livestock.cost.allocation.select.lines.wizard.form</field>
         <field name="model">livestock.cost.allocation.select.lines.wizard</field>
         <field name="arch" type="xml">
-            <form string="Seleccionar subtotales de factura">
+            <form string="Seleccionar líneas de facturas">
                 <group>
                     <field name="allocation_id"/>
                     <field name="available_line_ids" invisible="1"/>
-                    <field
-                        name="selected_line_ids"
-                        widget="many2many_tags"
-                        options="{'no_create_edit': True, 'no_open': True}"
-                        context="{'tree_view_ref': 'account.view_move_line_tree', 'form_view_ref': 'account.view_move_line_form'}"
-                    />
+                    <field name="selected_line_ids" options="{'no_create_edit': True, 'no_open': True}">
+                        <list>
+                            <field name="move_id" string="Factura"/>
+                            <field name="name" string="Descripción"/>
+                            <field name="partner_id" string="Proveedor"/>
+                            <field name="date" string="Fecha"/>
+                            <field name="price_subtotal" string="Subtotal"/>
+                        </list>
+                    </field>
                 </group>
                 <footer>
                     <button name="action_apply_selection" type="object" string="Cargar a la asignación" class="btn-primary"/>
