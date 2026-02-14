@@ -7,7 +7,9 @@
     "license": "LGPL-3",
     "category": "Accounting",
     "depends": ["livestock_accounting"],
-    "data": [],
+    "data": [
+        "security/ganadera_app_groups.xml",
+    ],
     "application": True,
     "installable": True,
 }

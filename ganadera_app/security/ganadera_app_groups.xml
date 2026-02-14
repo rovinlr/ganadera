@@ -1,0 +1,10 @@
+<odoo>
+    <record id="base.group_user" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('livestock_accounting.group_livestock_user'))]"/>
+    </record>
+
+    <record id="livestock_accounting.menu_livestock_root" model="ir.ui.menu">
+        <field name="web_icon">ganadera_app,static/description/icon.svg</field>
+        <field name="sequence">15</field>
+    </record>
+</odoo>
