@@ -11,13 +11,12 @@ class LivestockCostAllocation(models.Model):
     date = fields.Date(string="Fecha", required=True, default=fields.Date.context_today)
     company_id = fields.Many2one("res.company", default=lambda self: self.env.company, required=True)
     cattle_ids = fields.Many2many("livestock.cattle", string="Ganado a costear", domain="[('state','=','inventory')]")
+    allocation_line_ids = fields.One2many("livestock.cost.allocation.line", "allocation_id", string="Líneas disponibles")
     invoice_line_ids = fields.Many2many(
         "account.move.line",
-        "livestock_alloc_line_rel",
-        "allocation_id",
-        "move_line_id",
-        string="Líneas de factura de proveedor",
-        domain="[('move_id.move_type', '=', 'in_invoice'), ('move_id.state', '=', 'posted')]",
+        compute="_compute_invoice_line_ids",
+        string="Líneas de factura seleccionadas",
+        store=False,
     )
     method = fields.Selection(
         [("equal", "Igual para todos"), ("weight", "Por peso"), ("age", "Por edad")],
@@ -35,12 +34,66 @@ class LivestockCostAllocation(models.Model):
         for vals in vals_list:
             if vals.get("name", _("Nuevo")) == _("Nuevo"):
                 vals["name"] = self.env["ir.sequence"].next_by_code("livestock.cost.allocation") or _("Nuevo")
-        return super().create(vals_list)
+        allocations = super().create(vals_list)
+        allocations._sync_available_invoice_lines()
+        return allocations
 
-    @api.depends("invoice_line_ids.price_subtotal")
+    def write(self, vals):
+        result = super().write(vals)
+        if {"company_id", "state"}.intersection(vals.keys()):
+            self.filtered(lambda r: r.state == "draft")._sync_available_invoice_lines()
+        return result
+
+    @api.depends("allocation_line_ids.selected", "allocation_line_ids.move_line_id")
+    def _compute_invoice_line_ids(self):
+        for allocation in self:
+            selected_lines = allocation.allocation_line_ids.filtered("selected").mapped("move_line_id")
+            allocation.invoice_line_ids = selected_lines
+
+    @api.depends("allocation_line_ids.selected", "allocation_line_ids.move_line_id.price_subtotal")
     def _compute_total_to_allocate(self):
         for allocation in self:
-            allocation.total_to_allocate = sum(allocation.invoice_line_ids.mapped("price_subtotal"))
+            selected_lines = allocation.allocation_line_ids.filtered("selected").mapped("move_line_id")
+            allocation.total_to_allocate = sum(selected_lines.mapped("price_subtotal"))
+
+    def _get_allocated_move_line_ids(self):
+        return self.env["livestock.cost.history"].search([("move_line_id", "!=", False)]).mapped("move_line_id").ids
+
+    def _get_available_invoice_lines(self):
+        self.ensure_one()
+        allocated_line_ids = self._get_allocated_move_line_ids()
+        domain = [
+            ("move_id.move_type", "=", "in_invoice"),
+            ("move_id.state", "=", "posted"),
+            ("company_id", "=", self.company_id.id),
+        ]
+        if allocated_line_ids:
+            domain.append(("id", "not in", allocated_line_ids))
+        return self.env["account.move.line"].search(domain)
+
+    def _sync_available_invoice_lines(self):
+        for allocation in self:
+            if allocation.state == "done":
+                continue
+            selected_by_move_line = {
+                line.move_line_id.id: line.selected
+                for line in allocation.allocation_line_ids
+                if line.move_line_id
+            }
+            commands = [fields.Command.clear()]
+            for move_line in allocation._get_available_invoice_lines():
+                commands.append(
+                    fields.Command.create(
+                        {
+                            "move_line_id": move_line.id,
+                            "selected": selected_by_move_line.get(move_line.id, False),
+                        }
+                    )
+                )
+            allocation.allocation_line_ids = commands
+
+    def action_refresh_available_lines(self):
+        self._sync_available_invoice_lines()
 
     def action_allocate_costs(self):
         self.ensure_one()
@@ -50,6 +103,15 @@ class LivestockCostAllocation(models.Model):
             raise UserError(_("Debe seleccionar al menos una línea de factura."))
         if self.state == "done":
             raise UserError(_("Esta asignación ya fue procesada."))
+
+        allocated_lines = self.env["livestock.cost.history"].search([
+            ("move_line_id", "in", self.invoice_line_ids.ids)
+        ]).mapped("move_line_id")
+        if allocated_lines:
+            raise UserError(
+                _("Las siguientes líneas ya fueron asignadas en otro proceso: %s")
+                % ", ".join(allocated_lines.mapped("display_name"))
+            )
 
         total = self.total_to_allocate
         if total <= 0:
@@ -92,3 +154,19 @@ class LivestockCostAllocation(models.Model):
             else:
                 factors[cattle.id] = max(cattle.age_days, 1)
         return factors
+
+
+class LivestockCostAllocationLine(models.Model):
+    _name = "livestock.cost.allocation.line"
+    _description = "Línea disponible para asignación de costes"
+    _order = "selected desc, id desc"
+
+    allocation_id = fields.Many2one("livestock.cost.allocation", required=True, ondelete="cascade")
+    selected = fields.Boolean(string="Seleccionar")
+    move_line_id = fields.Many2one("account.move.line", string="Línea de factura", required=True, ondelete="cascade")
+    move_id = fields.Many2one(related="move_line_id.move_id", string="Factura", store=False, readonly=True)
+    partner_id = fields.Many2one(related="move_line_id.partner_id", string="Proveedor", store=False, readonly=True)
+    date = fields.Date(related="move_line_id.date", string="Fecha", store=False, readonly=True)
+    price_subtotal = fields.Monetary(related="move_line_id.price_subtotal", string="Subtotal", store=False, readonly=True)
+    livestock_category = fields.Selection(related="move_line_id.livestock_category", string="Categoría", store=False, readonly=True)
+    currency_id = fields.Many2one(related="move_line_id.currency_id", store=False, readonly=True)

@@ -39,7 +39,19 @@
                         <field name="cattle_ids" widget="many2many_tags" options="{'no_create_edit': True}"/>
                     </group>
                     <group>
-                        <field name="invoice_line_ids" widget="many2many_tags"/>
+                        <button name="action_refresh_available_lines" type="object" string="Refrescar líneas disponibles" class="btn-secondary" invisible="state == 'done'"/>
+                        <field name="allocation_line_ids" readonly="state == 'done'">
+                            <list editable="bottom" create="0" delete="0">
+                                <field name="selected" widget="boolean_toggle"/>
+                                <field name="move_id"/>
+                                <field name="move_line_id"/>
+                                <field name="partner_id"/>
+                                <field name="date"/>
+                                <field name="livestock_category"/>
+                                <field name="price_subtotal"/>
+                                <field name="currency_id" column_invisible="1"/>
+                            </list>
+                        </field>
                     </group>
                     <group>
                         <field name="note"/>
