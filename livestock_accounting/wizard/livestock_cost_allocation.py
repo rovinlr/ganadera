@@ -203,9 +203,19 @@ class LivestockCostAllocationSelectLinesWizard(models.TransientModel):
     _description = "Asistente para seleccionar subtotales"
 
     allocation_id = fields.Many2one("livestock.cost.allocation", required=True, readonly=True)
-    available_line_ids = fields.Many2many("account.move.line", string="Líneas disponibles", readonly=True)
+    available_line_ids = fields.Many2many(
+        "account.move.line",
+        "lca_sel_wiz_avail_rel",
+        "wizard_id",
+        "move_line_id",
+        string="Líneas disponibles",
+        readonly=True,
+    )
     selected_line_ids = fields.Many2many(
         "account.move.line",
+        "lca_sel_wiz_selected_rel",
+        "wizard_id",
+        "move_line_id",
         string="Subtotales a cargar",
         domain="[('id', 'in', available_line_ids)]",
     )
