@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Ganadería">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7A3E65"/>
+      <stop offset="100%" stop-color="#5A274A"/>
+    </linearGradient>
+  </defs>
+  <rect x="6" y="6" width="116" height="116" rx="24" fill="url(#g)"/>
+  <path d="M32 72c0-16 12-28 28-28s28 12 28 28v12H32V72z" fill="#fff" opacity="0.95"/>
+  <circle cx="64" cy="48" r="12" fill="#fff"/>
+  <path d="M48 42l-8-6M80 42l8-6" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+</svg>
