@@ -78,9 +78,10 @@ class LivestockCostAllocation(models.Model):
             ("move_id.move_type", "=", "in_invoice"),
             ("move_id.state", "=", "posted"),
             ("display_type", "in", [False, "product"]),
-            ("exclude_from_invoice_tab", "=", False),
             ("company_id", "=", self.company_id.id),
         ]
+        if "exclude_from_invoice_tab" in self.env["account.move.line"]._fields:
+            domain.append(("exclude_from_invoice_tab", "=", False))
         if unavailable_line_ids:
             domain.append(("id", "not in", list(unavailable_line_ids)))
         return self.env["account.move.line"].search(domain)
