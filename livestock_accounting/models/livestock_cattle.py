@@ -10,17 +10,8 @@ class LivestockCattle(models.Model):
     name = fields.Char(string="Nombre", required=True, tracking=True)
     sequence_code = fields.Char(string="Código", required=True, copy=False, readonly=True, default=lambda self: _("Nuevo"))
     ear_tag = fields.Char(string="Arete / Identificación", tracking=True)
-    category = fields.Selection(
-        [
-            ("nacimiento", "Nacimientos"),
-            ("desarrollo", "Desarrollo"),
-            ("produccion", "Producción"),
-        ],
-        string="Categoría",
-        required=True,
-        tracking=True,
-    )
-    breed = fields.Char(string="Raza", required=True)
+    category_id = fields.Many2one("livestock.category", string="Categoría", required=True, tracking=True)
+    breed_id = fields.Many2one("livestock.breed", string="Raza", required=True)
     inclusion_date = fields.Date(string="Fecha de nacimiento / inclusión", required=True, tracking=True)
     state = fields.Selection(
         [
@@ -44,7 +35,7 @@ class LivestockCattle(models.Model):
         string="Motivo de baja",
     )
     retirement_notes = fields.Text(string="Notas de baja")
-    farm_location = fields.Char(string="Ubicación / Lote")
+    location_id = fields.Many2one("livestock.location", string="Ubicación / Lote")
     responsible_id = fields.Many2one("res.users", string="Responsable", default=lambda self: self.env.user)
     weight_line_ids = fields.One2many("livestock.weight.control", "cattle_id", string="Control de pesos")
     current_weight = fields.Float(string="Peso actual (kg)", compute="_compute_current_weight", store=True, tracking=True)
