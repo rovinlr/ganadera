@@ -33,14 +33,13 @@
         <field name="model">account.move.line</field>
         <field name="arch" type="xml">
             <search string="Análisis contable ganadero">
-                <field name="name" string="Etiqueta"/>
                 <field name="date"/>
                 <field name="account_id"/>
                 <field name="partner_id"/>
                 <field name="journal_id"/>
                 <field name="livestock_category_id"/>
                 <filter name="posted" string="Asientos publicados" domain="[('parent_state', '=', 'posted')]"/>
-                <filter name="this_month" string="Mes actual" domain="[('date', '>=', context_today().strftime('%%Y-%%m-01'))]"/>
+                <filter name="this_month" string="Mes actual" domain="[('date', '&gt;=', context_today().strftime('%Y-%m-01'))]"/>
                 <group expand="0" string="Agrupar por">
                     <filter name="group_account" string="Cuenta" context="{'group_by': 'account_id'}"/>
                     <filter name="group_category" string="Categoría ganadera" context="{'group_by': 'livestock_category_id'}"/>
