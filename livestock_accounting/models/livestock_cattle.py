@@ -41,8 +41,10 @@ class LivestockCattle(models.Model):
     current_weight = fields.Float(string="Peso actual (kg)", compute="_compute_current_weight", store=True, tracking=True)
     cost_line_ids = fields.One2many("livestock.cost.history", "cattle_id", string="Coste histórico")
     total_historical_cost = fields.Monetary(string="Coste histórico acumulado", compute="_compute_total_historical_cost", store=True)
+    current_cost_per_kg = fields.Monetary(string="Costo por kg", compute="_compute_current_cost_per_kg", store=False)
     currency_id = fields.Many2one("res.currency", string="Moneda", default=lambda self: self.env.company.currency_id, required=True)
     age_days = fields.Integer(string="Edad (días)", compute="_compute_age_days", store=False)
+    age_years = fields.Float(string="Edad (años)", compute="_compute_age_years", store=False)
     health_event_ids = fields.One2many("livestock.health.event", "cattle_id", string="Sanidad y bienestar")
     movement_history_ids = fields.One2many("livestock.movement.history", "cattle_id", string="Histórico de movimientos", readonly=True)
 
@@ -68,11 +70,23 @@ class LivestockCattle(models.Model):
         for cattle in self:
             cattle.total_historical_cost = sum(cattle.cost_line_ids.mapped("allocated_amount"))
 
+    @api.depends("total_historical_cost", "current_weight")
+    def _compute_current_cost_per_kg(self):
+        for cattle in self:
+            cattle.current_cost_per_kg = (
+                cattle.total_historical_cost / cattle.current_weight if cattle.current_weight else 0.0
+            )
+
     @api.depends("inclusion_date")
     def _compute_age_days(self):
         today = fields.Date.today()
         for cattle in self:
             cattle.age_days = (today - cattle.inclusion_date).days if cattle.inclusion_date else 0
+
+    @api.depends("age_days")
+    def _compute_age_years(self):
+        for cattle in self:
+            cattle.age_years = cattle.age_days / 365.0 if cattle.age_days else 0.0
 
     @api.constrains("retirement_reason", "state")
     def _check_retirement_reason(self):

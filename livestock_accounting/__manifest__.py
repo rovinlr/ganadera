@@ -17,6 +17,8 @@
         "views/livestock_configuration_views.xml",
         "views/livestock_cattle_views.xml",
         "views/livestock_movement_views.xml",
+        "views/livestock_report_views.xml",
+        "report/livestock_cattle_report.xml",
         "wizard/livestock_cost_allocation_views.xml",
         "views/livestock_menus.xml",
     ],

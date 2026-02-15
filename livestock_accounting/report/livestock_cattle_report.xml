@@ -1,0 +1,53 @@
+<odoo>
+    <template id="report_active_herd_document">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <h2>Reporte de hatos activos</h2>
+                    <table class="table table-sm o_main_table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Arete</th>
+                                <th>Nombre</th>
+                                <th class="text-end">Edad (días)</th>
+                                <th class="text-end">Edad (años)</th>
+                                <th class="text-end">Peso actual (kg)</th>
+                                <th class="text-end">Costo por kg</th>
+                                <th class="text-end">Costo total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="docs" t-as="cattle">
+                                <tr>
+                                    <td><span t-esc="cattle.ear_tag or '-'"/></td>
+                                    <td><span t-esc="cattle.name"/></td>
+                                    <td class="text-end"><span t-esc="cattle.age_days"/></td>
+                                    <td class="text-end"><span t-esc="'%.2f' % cattle.age_years"/></td>
+                                    <td class="text-end"><span t-esc="'%.2f' % cattle.current_weight"/></td>
+                                    <td class="text-end">
+                                        <t t-set="cost_per_kg" t-value="(cattle.total_historical_cost / cattle.current_weight) if cattle.current_weight else 0.0"/>
+                                        <span t-esc="format_amount(env, cost_per_kg, cattle.currency_id)"/>
+                                    </td>
+                                    <td class="text-end">
+                                        <span t-esc="format_amount(env, cattle.total_historical_cost, cattle.currency_id)"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_active_herd" model="ir.actions.report">
+        <field name="name">Reporte de hatos activos</field>
+        <field name="model">livestock.cattle</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">livestock_accounting.report_active_herd_document</field>
+        <field name="report_file">livestock_accounting.report_active_herd_document</field>
+        <field name="binding_model_id" ref="model_livestock_cattle"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'Hatos activos - %s' % (object.display_name or '')</field>
+    </record>
+</odoo>
