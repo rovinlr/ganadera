@@ -77,6 +77,22 @@
                                 </list>
                             </field>
                         </page>
+                        <page string="Histórico de movimientos">
+                            <field name="movement_history_ids" readonly="1">
+                                <list>
+                                    <field name="date"/>
+                                    <field name="movement_id"/>
+                                    <field name="movement_type"/>
+                                    <field name="from_category"/>
+                                    <field name="to_category"/>
+                                    <field name="from_state"/>
+                                    <field name="to_state"/>
+                                    <field name="weight"/>
+                                    <field name="health_event_type"/>
+                                    <field name="retirement_reason"/>
+                                </list>
+                            </field>
+                        </page>
                         <page string="Baja y cumplimiento">
                             <group>
                                 <field name="retirement_reason" invisible="state == 'inventory'" required="state in ('retired','sold')"/>

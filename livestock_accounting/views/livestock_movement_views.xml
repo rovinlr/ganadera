@@ -1,0 +1,92 @@
+<odoo>
+    <record id="view_livestock_movement_tree" model="ir.ui.view">
+        <field name="name">livestock.movement.tree</field>
+        <field name="model">livestock.movement</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="date"/>
+                <field name="movement_type"/>
+                <field name="state"/>
+                <field name="cattle_ids" widget="many2many_tags"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_livestock_movement_form" model="ir.ui.view">
+        <field name="name">livestock.movement.form</field>
+        <field name="model">livestock.movement</field>
+        <field name="arch" type="xml">
+            <form string="Movimiento de hato">
+                <header>
+                    <button name="action_apply" string="Aplicar" type="object" class="btn-primary" invisible="state == 'applied'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,applied"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" readonly="1"/>
+                            <field name="date"/>
+                            <field name="movement_type"/>
+                            <field name="cattle_ids" widget="many2many_tags" readonly="state == 'applied'"/>
+                        </group>
+                        <group>
+                            <field name="weight" invisible="movement_type != 'weight'" required="movement_type == 'weight'"/>
+                            <field name="health_event_type" invisible="movement_type != 'health'" required="movement_type == 'health'"/>
+                            <field name="health_description" invisible="movement_type != 'health'" required="movement_type == 'health'"/>
+                            <field name="health_veterinarian" invisible="movement_type != 'health'"/>
+                            <field name="retirement_reason" invisible="movement_type != 'retirement'" required="movement_type == 'retirement'"/>
+                            <field name="retirement_notes" invisible="movement_type != 'retirement'"/>
+                            <field name="new_category" invisible="movement_type != 'reclassification'" required="movement_type == 'reclassification'"/>
+                        </group>
+                    </group>
+                    <field name="notes"/>
+                    <notebook>
+                        <page string="Histórico generado">
+                            <field name="movement_history_ids" readonly="1">
+                                <list>
+                                    <field name="date"/>
+                                    <field name="cattle_id"/>
+                                    <field name="movement_type"/>
+                                    <field name="from_category"/>
+                                    <field name="to_category"/>
+                                    <field name="from_state"/>
+                                    <field name="to_state"/>
+                                    <field name="weight"/>
+                                    <field name="health_event_type"/>
+                                    <field name="retirement_reason"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_livestock_movement_search" model="ir.ui.view">
+        <field name="name">livestock.movement.search</field>
+        <field name="model">livestock.movement</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="date"/>
+                <field name="movement_type"/>
+                <field name="state"/>
+                <filter string="Borrador" name="filter_draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Aplicado" name="filter_applied" domain="[('state', '=', 'applied')]"/>
+                <separator/>
+                <filter string="Agrupar por tipo" name="group_type" context="{'group_by': 'movement_type'}"/>
+                <filter string="Agrupar por estado" name="group_state" context="{'group_by': 'state'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_livestock_movement" model="ir.actions.act_window">
+        <field name="name">Movimientos</field>
+        <field name="res_model">livestock.movement</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_livestock_movement_search"/>
+    </record>
+</odoo>

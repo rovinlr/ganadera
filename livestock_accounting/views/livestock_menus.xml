@@ -3,6 +3,7 @@
 
     <menuitem id="menu_livestock_master" name="Hato" parent="menu_livestock_root" sequence="10"/>
     <menuitem id="menu_livestock_cattle" name="Ganado" parent="menu_livestock_master" action="action_livestock_cattle" sequence="10"/>
+    <menuitem id="menu_livestock_movements" name="Movimientos" parent="menu_livestock_master" action="action_livestock_movement" sequence="20"/>
 
     <menuitem id="menu_livestock_accounting" name="Contabilidad ganadera" parent="menu_livestock_root" sequence="20"/>
     <menuitem id="menu_livestock_allocation" name="Asignación de costes" parent="menu_livestock_accounting" action="action_livestock_cost_allocation" sequence="10"/>

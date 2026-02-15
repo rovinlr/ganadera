@@ -1,0 +1,9 @@
+<odoo noupdate="1">
+    <record id="seq_livestock_movement" model="ir.sequence">
+        <field name="name">Movimiento de hato</field>
+        <field name="code">livestock.movement</field>
+        <field name="prefix">MOV/%(year)s/</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+</odoo>

@@ -12,6 +12,7 @@ Este módulo implementa una solución integral de **registro de ganado y coste h
 - Métodos de asignación: **igualitario, por peso y por edad**.
 - Campo de categoría ganadera en líneas de factura para trazabilidad contable.
 - Registro sanitario y bienestar por animal.
+- Formulario de **movimientos masivos** para registrar pesos, eventos sanitarios, bajas y reclasificación por categoría con histórico por animal.
 - Evidencia de baja/venta con motivo y notas para auditoría.
 
 ## Aportes de cumplimiento y buenas prácticas
