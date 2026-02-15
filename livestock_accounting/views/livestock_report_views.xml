@@ -5,12 +5,11 @@
         <field name="arch" type="xml">
             <list create="0" edit="0" delete="0">
                 <field name="ear_tag" string="Arete"/>
-                <field name="name"/>
-                <field name="age_days" string="Edad (días)"/>
-                <field name="age_years" string="Edad (años)"/>
+                <field name="name" string="Nombre del hato"/>
+                <field name="inclusion_date" string="Fecha ingreso"/>
                 <field name="current_weight" string="Peso actual (kg)"/>
-                <field name="current_cost_per_kg" string="Costo por kg"/>
-                <field name="total_historical_cost" string="Costo total"/>
+                <field name="current_cost_per_kg" string="Costo por kilo"/>
+                <field name="total_historical_cost" string="Coste total"/>
             </list>
         </field>
     </record>
