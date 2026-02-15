@@ -53,6 +53,7 @@ class LivestockCattle(models.Model):
     currency_id = fields.Many2one("res.currency", string="Moneda", default=lambda self: self.env.company.currency_id, required=True)
     age_days = fields.Integer(string="Edad (días)", compute="_compute_age_days", store=False)
     health_event_ids = fields.One2many("livestock.health.event", "cattle_id", string="Sanidad y bienestar")
+    movement_history_ids = fields.One2many("livestock.movement.history", "cattle_id", string="Histórico de movimientos", readonly=True)
 
     _sql_constraints = [
         ("livestock_cattle_sequence_unique", "unique(sequence_code)", "El código del ganado debe ser único."),
