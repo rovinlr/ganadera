@@ -7,4 +7,9 @@
 
     <menuitem id="menu_livestock_accounting" name="Contabilidad ganadera" parent="menu_livestock_root" sequence="20"/>
     <menuitem id="menu_livestock_allocation" name="Asignación de costes" parent="menu_livestock_accounting" action="action_livestock_cost_allocation" sequence="10"/>
+
+    <menuitem id="menu_livestock_configuration" name="Configuración" parent="menu_livestock_root" sequence="30" groups="livestock_accounting.group_livestock_manager"/>
+    <menuitem id="menu_livestock_category" name="Categorías" parent="menu_livestock_configuration" action="action_livestock_category" sequence="10"/>
+    <menuitem id="menu_livestock_breed" name="Razas" parent="menu_livestock_configuration" action="action_livestock_breed" sequence="20"/>
+    <menuitem id="menu_livestock_location" name="Ubicaciones / Lotes" parent="menu_livestock_configuration" action="action_livestock_location" sequence="30"/>
 </odoo>

@@ -150,7 +150,7 @@ class LivestockCostAllocation(models.Model):
             raise UserError(_("No se pudo calcular una base válida para el método de asignación."))
 
         for line in self.invoice_line_ids:
-            eligible_cattle = self.cattle_ids.filtered(lambda c: not line.livestock_category or c.category == line.livestock_category)
+            eligible_cattle = self.cattle_ids.filtered(lambda c: not line.livestock_category_id or c.category_id == line.livestock_category_id)
             if not eligible_cattle:
                 continue
             eligible_sum = sum(factors[c.id] for c in eligible_cattle)
@@ -195,7 +195,7 @@ class LivestockCostAllocationLine(models.Model):
     partner_id = fields.Many2one(related="move_line_id.partner_id", string="Proveedor", store=False, readonly=True)
     date = fields.Date(related="move_line_id.date", string="Fecha", store=False, readonly=True)
     price_subtotal = fields.Monetary(related="move_line_id.price_subtotal", string="Subtotal", store=False, readonly=True)
-    livestock_category = fields.Selection(related="move_line_id.livestock_category", string="Categoría", store=False, readonly=True)
+    livestock_category_id = fields.Many2one(related="move_line_id.livestock_category_id", string="Categoría", store=False, readonly=True)
     currency_id = fields.Many2one(related="move_line_id.currency_id", store=False, readonly=True)
 
 

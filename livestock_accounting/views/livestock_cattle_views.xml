@@ -6,8 +6,8 @@
             <list>
                 <field name="sequence_code"/>
                 <field name="name"/>
-                <field name="category"/>
-                <field name="breed"/>
+                <field name="category_id"/>
+                <field name="breed_id"/>
                 <field name="inclusion_date"/>
                 <field name="current_weight"/>
                 <field name="total_historical_cost"/>
@@ -30,8 +30,8 @@
                             <field name="sequence_code" readonly="1"/>
                             <field name="name"/>
                             <field name="ear_tag"/>
-                            <field name="category"/>
-                            <field name="breed"/>
+                            <field name="category_id" options="{'no_create_edit': True}"/>
+                            <field name="breed_id" options="{'no_create_edit': True}"/>
                             <field name="inclusion_date"/>
                         </group>
                         <group>
@@ -39,7 +39,7 @@
                             <field name="age_days" readonly="1"/>
                             <field name="total_historical_cost" readonly="1"/>
                             <field name="currency_id" groups="base.group_multi_currency"/>
-                            <field name="farm_location"/>
+                            <field name="location_id" options="{'no_create_edit': True}"/>
                             <field name="responsible_id"/>
                         </group>
                     </group>
@@ -83,8 +83,8 @@
                                     <field name="date"/>
                                     <field name="movement_id"/>
                                     <field name="movement_type"/>
-                                    <field name="from_category"/>
-                                    <field name="to_category"/>
+                                    <field name="from_category_id"/>
+                                    <field name="to_category_id"/>
                                     <field name="from_state"/>
                                     <field name="to_state"/>
                                     <field name="weight"/>
@@ -114,12 +114,12 @@
             <search>
                 <field name="sequence_code"/>
                 <field name="name"/>
-                <field name="category"/>
+                <field name="category_id"/>
                 <field name="state"/>
                 <separator/>
-                <filter string="Agrupar por categoría" name="group_category" context="{'group_by': 'category'}"/>
+                <filter string="Agrupar por categoría" name="group_category" context="{'group_by': 'category_id'}"/>
                 <filter string="Agrupar por estado" name="group_state" context="{'group_by': 'state'}"/>
-                <filter string="Agrupar por raza" name="group_breed" context="{'group_by': 'breed'}"/>
+                <filter string="Agrupar por raza" name="group_breed" context="{'group_by': 'breed_id'}"/>
             </search>
         </field>
     </record>

@@ -1,0 +1,11 @@
+<odoo noupdate="1">
+    <record id="livestock_category_nacimiento" model="livestock.category">
+        <field name="name">Nacimientos</field>
+    </record>
+    <record id="livestock_category_desarrollo" model="livestock.category">
+        <field name="name">Desarrollo</field>
+    </record>
+    <record id="livestock_category_produccion" model="livestock.category">
+        <field name="name">Producción</field>
+    </record>
+</odoo>

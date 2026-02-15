@@ -48,7 +48,7 @@
                                 <field name="move_line_id"/>
                                 <field name="partner_id"/>
                                 <field name="date"/>
-                                <field name="livestock_category"/>
+                                <field name="livestock_category_id"/>
                                 <field name="price_subtotal"/>
                                 <field name="currency_id" column_invisible="1"/>
                             </list>
