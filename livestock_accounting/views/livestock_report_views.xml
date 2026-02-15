@@ -28,4 +28,95 @@
               parent="menu_livestock_master"
               action="action_livestock_active_herd_report"
               sequence="30"/>
+
+    <record id="view_livestock_accounting_analysis_search" model="ir.ui.view">
+        <field name="name">account.move.line.livestock.analysis.search</field>
+        <field name="model">account.move.line</field>
+        <field name="arch" type="xml">
+            <search string="Análisis contable ganadero">
+                <field name="name" string="Etiqueta"/>
+                <field name="date"/>
+                <field name="account_id"/>
+                <field name="partner_id"/>
+                <field name="journal_id"/>
+                <field name="livestock_category_id"/>
+                <filter name="posted" string="Asientos publicados" domain="[('parent_state', '=', 'posted')]"/>
+                <filter name="this_month" string="Mes actual" domain="[('date', '>=', context_today().strftime('%%Y-%%m-01'))]"/>
+                <group expand="0" string="Agrupar por">
+                    <filter name="group_account" string="Cuenta" context="{'group_by': 'account_id'}"/>
+                    <filter name="group_category" string="Categoría ganadera" context="{'group_by': 'livestock_category_id'}"/>
+                    <filter name="group_journal" string="Diario" context="{'group_by': 'journal_id'}"/>
+                    <filter name="group_month" string="Mes" context="{'group_by': 'date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_livestock_accounting_analysis_pivot" model="ir.ui.view">
+        <field name="name">account.move.line.livestock.analysis.pivot</field>
+        <field name="model">account.move.line</field>
+        <field name="arch" type="xml">
+            <pivot string="Reporte contable ganadero" disable_linking="1">
+                <field name="account_id" type="row"/>
+                <field name="livestock_category_id" type="col"/>
+                <field name="debit" type="measure"/>
+                <field name="credit" type="measure"/>
+                <field name="balance" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_livestock_accounting_analysis_tree" model="ir.ui.view">
+        <field name="name">account.move.line.livestock.analysis.tree</field>
+        <field name="model">account.move.line</field>
+        <field name="arch" type="xml">
+            <list create="0" edit="0" delete="0">
+                <field name="date"/>
+                <field name="move_name" string="Asiento"/>
+                <field name="journal_id"/>
+                <field name="account_id"/>
+                <field name="partner_id"/>
+                <field name="livestock_category_id"/>
+                <field name="debit" sum="Total débito"/>
+                <field name="credit" sum="Total crédito"/>
+                <field name="balance" sum="Total balance"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_livestock_accounting_analysis" model="ir.actions.act_window">
+        <field name="name">Reporte contable ganadero</field>
+        <field name="res_model">account.move.line</field>
+        <field name="view_mode">pivot,list</field>
+        <field name="search_view_id" ref="view_livestock_accounting_analysis_search"/>
+        <field name="domain">[("livestock_category_id", "!=", False), ("display_type", "=", False)]</field>
+        <field name="context">{'search_default_posted': 1, 'group_by_no_leaf': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Carga movimientos contables con categoría ganadera para ver su balance.
+            </p>
+        </field>
+    </record>
+
+
+
+    <record id="action_livestock_accounting_analysis_pivot_view" model="ir.actions.act_window.view">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">pivot</field>
+        <field name="view_id" ref="view_livestock_accounting_analysis_pivot"/>
+        <field name="act_window_id" ref="action_livestock_accounting_analysis"/>
+    </record>
+
+    <record id="action_livestock_accounting_analysis_list_view" model="ir.actions.act_window.view">
+        <field name="sequence" eval="2"/>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="view_livestock_accounting_analysis_tree"/>
+        <field name="act_window_id" ref="action_livestock_accounting_analysis"/>
+    </record>
+
+    <menuitem id="menu_livestock_accounting_analysis"
+              name="Reporte contable"
+              parent="menu_livestock_accounting"
+              action="action_livestock_accounting_analysis"
+              sequence="20"/>
 </odoo>
